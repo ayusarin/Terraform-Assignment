@@ -39,15 +39,20 @@ terrafoprm apply will give output with ALB and private dns entries.
 **Modules-**
 VPC - 
   -VPC, public & private subnet, Routetables, InternetGateway, NAT gateway
+  
 security_group- 
   - create security groups for alb, web server and bastion server (for mgmt)
+
 bastion-
   - create ec2 in public subnet for accessing private ec2
+
 load_blancer-
   - create alb, target group, listener
+
 autoscaling-
   - create autoscaling group, launch template using latest AWS AMI, auto scaling policy on basis of cpu and status check
     cloudwatch alarm with sns.
+    
 route53 -
   - for creating private zone in route53
   - add alb record
