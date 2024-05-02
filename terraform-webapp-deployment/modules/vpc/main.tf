@@ -45,7 +45,7 @@ resource "aws_internet_gateway" "Internet_Gateway" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "IG-Public-&-Private-VPC"
+    Name = "IG-Public-VPC"
   }
 }
 
@@ -73,11 +73,6 @@ resource "aws_route_table" "Public-Subnet-RT" {
 }
 
 
-
-
-
-
-
   # Creating a resource for the Route Table Association!
 resource "aws_route_table_association" "RT-IG-Association" {
 
@@ -93,4 +88,68 @@ resource "aws_route_table_association" "RT-IG-Association" {
 
   #  Route Table ID
   route_table_id = aws_route_table.Public-Subnet-RT.id
+}
+
+resource "aws_eip" "my_eip" {
+  # Optionally specify the VPC ID if you are using a VPC
+  vpc = true
+}
+
+#Create Nat Gateway
+resource "aws_nat_gateway" "nat_gateway" {
+
+  depends_on = [
+    aws_vpc.main,
+    aws_subnet.public,
+    aws_subnet.private,
+    aws_eip.my_eip
+  ]
+
+  allocation_id = aws_eip.my_eip.id
+
+  subnet_id = aws_subnet.public[0].id  # Access subnet_id with count.index
+
+  tags = {
+    Name = "NAT-GAT"
+  }
+
+}
+
+resource "aws_route_table" "Private-Subnet-RT" {
+  depends_on = [
+    aws_vpc.main,
+    aws_nat_gateway.nat_gateway
+  ]
+
+  # VPC ID
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "Route Table for NAT Gateway"
+  }
+}
+
+resource "aws_route" "nat_gateway_route" {
+
+  depends_on = [
+    aws_route_table.Private-Subnet-RT
+  ]
+
+  route_table_id         = aws_route_table.Private-Subnet-RT.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+}
+
+  # Creating a resource for the Route Table Association!
+resource "aws_route_table_association" "RT-NAT-Association" {
+
+  depends_on = [
+    aws_route.nat_gateway_route
+  ]
+
+  count     = length(var.private_subnet_cidrs)  # Use the length of the list
+  subnet_id = aws_subnet.private[count.index].id  # Access subnet_id with count.index
+
+  #  Route Table ID
+  route_table_id = aws_route_table.Private-Subnet-RT.id
 }

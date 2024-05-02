@@ -27,6 +27,11 @@ variable "desired_capacity" {
   default     = 1
 }
 
+variable "security_group_id" {
+  description = "A list of subnet IDs where the instances will be deployed"
+  type        = string
+}
+
 variable "image_id" {
   description = "The ID of the AMI to use for instances launched by the autoscaling group"
   type        = string
@@ -57,6 +62,11 @@ variable "log_volume_size" {
   description = "The size of the secondary volume for storing log data, in GB"
   type        = number
   default     = 20
+}
+
+variable "alb_tg_arn" {
+  description = "The size of the secondary volume for storing log data, in GB"
+  type        = string
 }
 
 # You may add more variables as needed for health check settings, termination policies, etc.

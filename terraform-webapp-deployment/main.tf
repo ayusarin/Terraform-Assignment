@@ -48,16 +48,19 @@ module "autoscaling" {
   image_id          = "ami-013e83f579886baeb" #var.ami_id
   instance_type     = "t2.micro"
   key_name          = aws_key_pair.key121.key_name
+  security_group_id = module.security_group.security_group_id
+  alb_tg_arn = module.load_balancer.load_balancer_target_group_arn
   user_data =  base64encode(<<EOF
 #!/bin/bash
-yum update -y 
-yum install -y python3-pip 
-pip3 install ansible
+sudo yum update -y 
+sudo yum install -y python3-pip 
+sudo pip3 install ansible
+sudo curl -OL https://raw.githubusercontent.com/ayusarin/Terraform-Assignment/ayush/terraform-webapp-deployment/ansible/playbook.yaml
+sudo ansible-playbook -i localhost /playbook.yaml
 EOF
 )
   
 }
-
 
 module "bastion" {
   source            = "./modules/bastion"
