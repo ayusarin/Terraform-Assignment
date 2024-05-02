@@ -30,6 +30,7 @@ desired_capacity
 alert_email
 
 **To run terraform code**
+run below cmds within folder terraform-webapp-deployment
 terraform plan -var-file="variables.tfvars"
 terraform apply -var-file="variables.tfvars" 
 
