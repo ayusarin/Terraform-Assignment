@@ -37,6 +37,7 @@ terraform apply -var-file="variables.tfvars"
 terrafoprm apply will give output with ALB and private dns entries.
 
 **Modules-**
+
 VPC - 
   -VPC, public & private subnet, Routetables, InternetGateway, NAT gateway
   
