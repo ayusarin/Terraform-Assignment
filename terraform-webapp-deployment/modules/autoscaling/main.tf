@@ -118,10 +118,10 @@ resource "aws_sns_topic" "example_sns_topic" {
 resource "aws_sns_topic_subscription" "example_email_subscription" {
   topic_arn = aws_sns_topic.example_sns_topic.arn
   protocol  = "email"
-  endpoint  = "ayu.sarin@gmail.com"
+  endpoint  = var.alert_email
 }
 
-
+#Get Latest AWS AMI
 data "aws_ami" "latest" {
   most_recent = true
 

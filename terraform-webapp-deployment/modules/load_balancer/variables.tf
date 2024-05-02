@@ -40,7 +40,7 @@ variable "vpc_id" {
 variable "health_check_interval" {
   description = "The approximate amount of time, in seconds, between health checks of an individual target"
   type        = number
-  default     = 60
+  default     = 30
 }
 
 variable "health_check_path" {
@@ -58,7 +58,7 @@ variable "health_check_port" {
 variable "health_check_timeout" {
   description = "The amount of time, in seconds, during which no response means a failed health check"
   type        = number
-  default     = 5
+  default     = 10
 }
 
 variable "health_check_healthy_threshold" {
@@ -70,7 +70,7 @@ variable "health_check_healthy_threshold" {
 variable "health_check_unhealthy_threshold" {
   description = "The number of consecutive health check failures required before considering the target unhealthy"
   type        = number
-  default     = 6
+  default     = 3
 }
 
 variable "listener_port" {

@@ -5,12 +5,12 @@ variable "name" {
 }
 
 variable "alb_name" {
-  description = "The name of the security group"
+  description = "The name of the alb security group"
   type        = string
 }
 
 variable "bst_name" {
-  description = "The name of the security group"
+  description = "The name of the bst security group"
   type        = string
 }
 

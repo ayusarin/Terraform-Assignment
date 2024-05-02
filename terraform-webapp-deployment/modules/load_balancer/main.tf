@@ -7,7 +7,6 @@ resource "aws_lb" "web_lb" {
   subnets            = var.public_subnets
 
   enable_deletion_protection = var.enable_deletion_protection
-  #deletion_protection_enabled = var.deletion_protection_enabled
 
   lifecycle {
     create_before_destroy = true
@@ -42,3 +41,4 @@ resource "aws_lb_listener" "web_lb_listener" {
     target_group_arn = aws_lb_target_group.web_target_group.arn
   }
 }
+

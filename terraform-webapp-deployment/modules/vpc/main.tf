@@ -1,14 +1,16 @@
 # modules/vpc/main.tf
+
 resource "aws_vpc" "main" {
   cidr_block = var.cidr
-  
-  #enable_dns_hostnames = true
+  enable_dns_hostnames = true
+  enable_dns_support = true
 
   tags = {
     Name = var.name
   }
 }
 
+#Public Subnet
 resource "aws_subnet" "public" {
   count                  = length(var.public_subnet_cidrs)
   vpc_id                 = aws_vpc.main.id
@@ -21,6 +23,7 @@ resource "aws_subnet" "public" {
   }
 }
 
+#Private Subnet
 resource "aws_subnet" "private" {
   count                  = length(var.private_subnet_cidrs)
   vpc_id                 = aws_vpc.main.id
@@ -41,7 +44,6 @@ resource "aws_internet_gateway" "Internet_Gateway" {
     aws_subnet.private
   ]
 
-  # VPC in which it has to be created!
   vpc_id = aws_vpc.main.id
 
   tags = {
@@ -58,7 +60,6 @@ resource "aws_route_table" "Public-Subnet-RT" {
     aws_internet_gateway.Internet_Gateway
   ]
 
-  # VPC ID
   vpc_id = aws_vpc.main.id
 
   # NAT Rule
@@ -91,8 +92,7 @@ resource "aws_route_table_association" "RT-IG-Association" {
 }
 
 resource "aws_eip" "my_eip" {
-  # Optionally specify the VPC ID if you are using a VPC
-  #vpc = true
+
 }
 
 #Create Nat Gateway

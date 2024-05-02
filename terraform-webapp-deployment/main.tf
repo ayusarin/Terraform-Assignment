@@ -11,21 +11,21 @@ terraform {
 # Configure the AWS Provider
 provider "aws" {
   #profile             = "terraform" 
-  region              = "ap-south-1" #var.region
+  region              = var.region
 }
 
 module "vpc" {
   source               = "./modules/vpc"
-  name                 = "example-vpc"
-  cidr                 = "10.0.0.0/16"
-  subnet_azs                = ["ap-south-1a", "ap-south-1b"]
-  private_subnet_cidrs      = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnet_cidrs       = ["10.0.101.0/24", "10.0.102.0/24"]
+  name                 = var.vpc_name
+  cidr                 = var.vpc_cidr
+  subnet_azs                = var.vpc_subnet_azs
+  private_subnet_cidrs      = var.vpc_private_subnet_cidr
+  public_subnet_cidrs       = var.vpc_public_subnet_cidr
 }
 
 module "security_group" {
   source = "./modules/security_group"
-  name = "we_server"
+  name = "web_server"
   alb_name = "alb_sg"
   bst_name = "bst_sg"
   vpc_id = module.vpc.vpc_id
@@ -33,7 +33,7 @@ module "security_group" {
 
 module "load_balancer" {
   source = "./modules/load_balancer"
-  name              = "example-lb"
+  name              = var.alb_name
   vpc_id            = module.vpc.vpc_id
   public_subnets    = module.vpc.public_subnet_ids
   security_group_id = module.security_group.alb_security_group_id
@@ -42,13 +42,17 @@ module "load_balancer" {
 
 module "autoscaling" {
   source = "./modules/autoscaling"
-  name               = "example_asg"
-  private_subnet_ids    = module.vpc.private_subnet_ids
-  image_id          = "ami-013e83f579886baeb" #var.ami_id
-  instance_type     = "t2.micro"
+  name               = var.asg_name
+  private_subnet_ids = module.vpc.private_subnet_ids
+  image_id          = "ami-013e83f579886baeb" #default ami
+  instance_type     = var.instance_type
   key_name          = aws_key_pair.key121.key_name
   security_group_id = module.security_group.web_security_group_id
   alb_tg_arn = module.load_balancer.load_balancer_target_group_arn
+  min_size          = var.min_size
+  max_size          = var.max_size
+  desired_capacity  = var.desired_capacity
+  alert_email = var.alert_email
   user_data =  base64encode(<<EOF
 #!/bin/bash
 sudo yum update -y 
@@ -66,17 +70,17 @@ module "bastion" {
   name              = "bastion"
   public_subnet_ids = module.vpc.public_subnet_ids
   image_id          = "ami-013e83f579886baeb" #var.ami_id
-  instance_type     = "t2.micro"
+  instance_type     = var.instance_type
   key_name          = aws_key_pair.key121.key_name
   security_group_id = module.security_group.bst_security_group_id
 
 }
 
-/*
 module "route53" {
   source = "./modules/route53"
-  private_zone_name = "example"
+  private_zone_name = "example.local"
   region = var.region
   vpc_id  = module.vpc.vpc_id
+  alb_dns_name = module.load_balancer.load_balancer_dns_name
+  alb_zone_id = module.load_balancer.load_balancer_zone_id
 }
-*/

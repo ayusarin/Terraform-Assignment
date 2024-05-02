@@ -13,3 +13,13 @@ variable "region" {
   description = "The AWS region where the VPC is located"
   type        = string
 }
+
+variable "alb_dns_name" {
+  description = "alb_dns_name"
+  type        = string
+}
+
+variable "alb_zone_id" {
+  description = "alb zone id"
+  type        = string
+}
