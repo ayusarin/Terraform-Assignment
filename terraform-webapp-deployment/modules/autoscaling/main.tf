@@ -2,7 +2,7 @@
 
 resource "aws_launch_template" "web_launch_template" {
   name_prefix   = var.name
-  image_id      = var.image_id
+  image_id      = data.aws_ami.latest.id #var.image_id
   instance_type = var.instance_type
   key_name      = var.key_name
   user_data     = var.user_data
@@ -30,7 +30,7 @@ resource "aws_launch_template" "web_launch_template" {
 
 resource "aws_autoscaling_group" "web_asg" {
 
-  name             = var.name
+  name                = var.name
   vpc_zone_identifier = var.private_subnet_ids
   launch_template {
     id      = aws_launch_template.web_launch_template.id
@@ -119,4 +119,29 @@ resource "aws_sns_topic_subscription" "example_email_subscription" {
   topic_arn = aws_sns_topic.example_sns_topic.arn
   protocol  = "email"
   endpoint  = "ayu.sarin@gmail.com"
+}
+
+
+data "aws_ami" "latest" {
+  most_recent = true
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }

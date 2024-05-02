@@ -92,7 +92,7 @@ resource "aws_route_table_association" "RT-IG-Association" {
 
 resource "aws_eip" "my_eip" {
   # Optionally specify the VPC ID if you are using a VPC
-  vpc = true
+  #vpc = true
 }
 
 #Create Nat Gateway
