@@ -11,7 +11,7 @@ vpc_public_subnet_cidr = ["10.0.101.0/24", "10.0.102.0/24"]
 #ec2
 instance_type = "t3.medium"
 
-#auto_scaling
+#auto_scaling using sns
 alb_name = "example-lb"
 asg_name = "example_asg"
 min_size = 2
