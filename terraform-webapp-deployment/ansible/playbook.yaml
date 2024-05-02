@@ -1,0 +1,23 @@
+- name: Configure web server
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Enable Nginx repository
+      command: amazon-linux-extras enable nginx1
+
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy HTML file
+      copy:
+        content: "<html><head><title>Welcome to My Website</title></head><body><h1>Hello, World!</h1></body></html>"
+        dest: /usr/share/nginx/html/index.html
