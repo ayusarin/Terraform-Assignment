@@ -1,9 +1,11 @@
----
 - name: Configure web server
   hosts: localhost
-  become: yes
+  become: true
 
   tasks:
+    - name: Enable Nginx repository
+      command: amazon-linux-extras enable nginx1
+
     - name: Install Nginx
       yum:
         name: nginx
